@@ -14,12 +14,13 @@ pub async fn get_groups() -> Result<Json<Vec<Grup>>, errors::DatabaseErrors> {
             ))
         }
     };
-    log::debug!("established conenction");
 
     let grps = match grups.load::<Grup>(&mut connection) {
         Ok(o) => o,
         Err(err) => return Err(errors::DatabaseErrors::SelectError(err.to_string())),
     };
+
+    log::info!("found groups");
 
     return Ok(Json(grps));
 }

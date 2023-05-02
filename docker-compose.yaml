@@ -1,0 +1,21 @@
+version: '3.7'
+
+services:
+
+  phpmyadmin:
+    container_name: phpmyadmin
+    image: phpmyadmin/phpmyadmin:latest
+    restart: always
+    ports:
+      - 8081:80
+  db:
+    container_name: mysql
+    image: mysql:8.0-oracle
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+    ports:
+      - "3306:3306"
+
+volumes:
+  db-vol:
