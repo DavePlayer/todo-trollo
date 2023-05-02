@@ -6,8 +6,29 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+# http server
 actix-web="4.3.1"
-uuid= { version="1.3.2", features=["v4"] }
+
+# objects serializations
 serde = {version="1.0.160", features=["derive"]}
+
+# craeting logs of requests
 env_logger="0.10.0"
 log="0.4.17"
+
+# env variabless
+dotenv = "0.15.0"
+
+# database (kill me)
+diesel_cli = "2.0.1"
+diesel = {version="2.0.4", features=["mysql", "uuid"]}
+
+# needs special declaration so it can be serialized
+[dependencies.uuid]
+version = "1.3.2"
+features = [
+    "v4",                # Lets you generate random UUIDs
+    "serde",
+    "fast-rng",          # Use a faster (but still sufficiently random) RNG
+    "macro-diagnostics", # Enable better diagnostics for compile-time UUIDs
+]
