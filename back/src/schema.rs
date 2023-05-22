@@ -22,7 +22,7 @@ diesel::table! {
         name -> Text,
         login -> Text,
         password -> Text,
-        img_url -> Nullable<Text>,
+        img_url -> Text,
     }
 }
 

@@ -3,18 +3,25 @@ use std::{error::Error, fmt};
 use actix_web::{
     error,
     http::{header::ContentType, StatusCode},
+    web::Json,
     HttpResponse,
 };
+
+use crate::models::user::UserToRegister;
 
 #[derive(Debug)]
 pub enum DatabaseErrors {
     SelectError(String),
     CantEstablishConnection(String),
+    UserExists(Json<UserToRegister>),
 }
 
 impl fmt::Display for DatabaseErrors {
     fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
-        fmt.write_str("MySQL database error")
+        match &self {
+            DatabaseErrors::UserExists(_) => fmt.write_str("User Already Exists"),
+            _ => fmt.write_str("MySQL database error"),
+        }
     }
 }
 
@@ -29,6 +36,13 @@ impl error::ResponseError for DatabaseErrors {
             DatabaseErrors::SelectError(err) => {
                 log::error!("error when using select statement to database:\n {}", err)
             }
+            DatabaseErrors::UserExists(user) => {
+                log::error!(
+                    "Tried to register existing user: login: {} | name: {}",
+                    user.login,
+                    user.name
+                )
+            }
         }
         HttpResponse::build(self.status_code())
             .insert_header(ContentType::html())
@@ -39,6 +53,7 @@ impl error::ResponseError for DatabaseErrors {
         match self {
             DatabaseErrors::CantEstablishConnection(_) => StatusCode::INTERNAL_SERVER_ERROR,
             DatabaseErrors::SelectError(_) => StatusCode::BAD_REQUEST,
+            DatabaseErrors::UserExists(_) => StatusCode::CONFLICT,
         }
     }
 }

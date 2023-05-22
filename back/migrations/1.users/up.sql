@@ -3,5 +3,5 @@ CREATE TABLE `users` (
     name TEXT NOT NULL,
     login TEXT NOT NULL,
     password TEXT NOT NULL,
-    img_url TEXT
+    img_url TEXT NOT NULL
 );

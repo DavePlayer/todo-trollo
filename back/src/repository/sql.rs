@@ -5,10 +5,10 @@ pub fn establish_connection() -> Result<MysqlConnection, Box<dyn std::error::Err
     dotenv().ok();
 
     let url = std::env::var("DATABASE_URL")?;
-    log::debug!("||{}||", url);
+    // log::debug!("||{}||", url);
 
     let conn = MysqlConnection::establish(&url)?;
-    log::debug!("GOT MAKAPALKA");
+    log::debug!("connected with mysql somehow. don't ask how");
 
     Ok(conn)
 }
