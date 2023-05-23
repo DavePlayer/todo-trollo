@@ -5,6 +5,10 @@ use crate::{
 };
 use actix_web::{post, web::Json};
 use diesel::{insert_into, prelude::*};
+use hmac::{Hmac, Mac};
+use jwt::SignWithKey;
+use sha2::Sha256;
+use std::collections::BTreeMap;
 
 #[post("/register")]
 pub async fn register_new_user(
@@ -32,6 +36,13 @@ pub async fn register_new_user(
     };
 
     log::debug!("users: {:?}", checked_users);
+
+    let key: Hmac<Sha256> = Hmac::new_from_slice(b"some-secret").unwrap();
+    let mut claims = BTreeMap::new();
+    claims.insert("sub", "someone");
+    let token_str = claims.sign_with_key(&key).unwrap();
+
+    log::debug!("token: {}", token_str);
 
     if checked_users.len() > 0 {
         return Err(errors::DatabaseErrors::UserExists(body));
