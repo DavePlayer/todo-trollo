@@ -14,6 +14,7 @@ pub enum DatabaseErrors {
     SelectError(String),
     CantEstablishConnection(String),
     UserExists(Json<UserToRegister>),
+    InsertError(String),
 }
 
 impl fmt::Display for DatabaseErrors {
@@ -36,6 +37,9 @@ impl error::ResponseError for DatabaseErrors {
             DatabaseErrors::SelectError(err) => {
                 log::error!("error when using select statement to database:\n {}", err)
             }
+            DatabaseErrors::InsertError(err) => {
+                log::error!("error when using insert statement to database:\n {}", err)
+            }
             DatabaseErrors::UserExists(user) => {
                 log::error!(
                     "Tried to register existing user: login: {} | name: {}",
@@ -52,7 +56,8 @@ impl error::ResponseError for DatabaseErrors {
     fn status_code(&self) -> StatusCode {
         match self {
             DatabaseErrors::CantEstablishConnection(_) => StatusCode::INTERNAL_SERVER_ERROR,
-            DatabaseErrors::SelectError(_) => StatusCode::BAD_REQUEST,
+            DatabaseErrors::SelectError(_) => StatusCode::INTERNAL_SERVER_ERROR,
+            DatabaseErrors::InsertError(_) => StatusCode::INTERNAL_SERVER_ERROR,
             DatabaseErrors::UserExists(_) => StatusCode::CONFLICT,
         }
     }

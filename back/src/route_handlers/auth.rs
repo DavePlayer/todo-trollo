@@ -1,10 +1,10 @@
 use crate::{
-    errors,
+    errors::{self, DatabaseErrors},
     models::user::{User, UserToRegister},
     repository::sql::establish_connection,
 };
 use actix_web::{post, web::Json};
-use diesel::prelude::*;
+use diesel::{insert_into, prelude::*};
 
 #[post("/register")]
 pub async fn register_new_user(
@@ -36,6 +36,27 @@ pub async fn register_new_user(
     if checked_users.len() > 0 {
         return Err(errors::DatabaseErrors::UserExists(body));
     }
+
+    let ans = match insert_into(users)
+        .values((
+            name.eq(&body.name),
+            login.eq(&body.login),
+            password.eq(&body.password),
+        ))
+        .execute(&mut connection)
+    {
+        Ok(sth) => sth,
+        Err(err) => {
+            return Err(DatabaseErrors::InsertError(err.to_string()));
+        }
+    };
+
+    log::info!(
+        "successfully registered new user {} | {} -> status: {}",
+        body.login,
+        body.name,
+        ans
+    );
 
     Ok(Json(Vec::new()))
 }
