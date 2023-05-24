@@ -18,6 +18,7 @@ mod models;
 mod repository;
 mod route_handlers;
 mod schema;
+mod tests;
 
 #[get("/")]
 async fn index() -> String {
