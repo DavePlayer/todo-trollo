@@ -8,6 +8,24 @@ pub struct UserToRegister {
     pub password: String,
 }
 
+#[derive(Serialize, Deserialize, Debug)]
+pub struct UserAsResponse {
+    pub id: i32,
+    pub name: String,
+    pub login: String,
+    pub token: String,
+}
+impl UserAsResponse {
+    pub fn new(id: i32, name: &str, login: &str, token: String) -> UserAsResponse {
+        UserAsResponse {
+            id,
+            name: name.to_string(),
+            login: login.to_string(),
+            token,
+        }
+    }
+}
+
 #[derive(Debug, Queryable, Insertable)]
 #[diesel(table_name = users)]
 pub struct User {

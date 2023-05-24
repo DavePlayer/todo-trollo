@@ -1,14 +1,6 @@
 // @generated automatically by Diesel CLI.
 
 diesel::table! {
-    group_assigned_users (id) {
-        id -> Integer,
-        group_id -> Integer,
-        user_id -> Integer,
-    }
-}
-
-diesel::table! {
     grups (id) {
         id -> Integer,
         name -> Text,
@@ -26,11 +18,4 @@ diesel::table! {
     }
 }
 
-diesel::joinable!(group_assigned_users -> grups (group_id));
-diesel::joinable!(group_assigned_users -> users (user_id));
-
-diesel::allow_tables_to_appear_in_same_query!(
-    group_assigned_users,
-    grups,
-    users,
-);
+diesel::allow_tables_to_appear_in_same_query!(grups, users,);
