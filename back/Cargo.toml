@@ -8,6 +8,10 @@ edition = "2021"
 [dependencies]
 # http server
 actix-web="4.3.1"
+actix-web-httpauth = "0.8.0"
+
+# async capabilities
+tokio = { version = "1", features = ["full"] }
 
 # objects serializations
 serde = {version="1.0.160", features=["derive"]}

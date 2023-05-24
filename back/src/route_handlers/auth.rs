@@ -1,6 +1,6 @@
 use crate::{
     errors::{self, DatabaseErrors},
-    models::user::{User, UserAsResponse, UserToRegister},
+    models::user::{User, UserAsResponse, UserClaims, UserToRegister},
     repository::sql::establish_connection,
 };
 use actix_web::{post, web::Json};
@@ -8,7 +8,6 @@ use diesel::{insert_into, prelude::*};
 use hmac::{Hmac, Mac};
 use jwt::SignWithKey;
 use sha2::Sha256;
-use std::collections::BTreeMap;
 
 #[post("/register")]
 pub async fn register_new_user(
@@ -24,7 +23,7 @@ pub async fn register_new_user(
         Err(err) => {
             return Err(errors::DatabaseErrors::CantEstablishConnection(
                 err.to_string(),
-            ))
+            ));
         }
     };
 
@@ -89,8 +88,12 @@ pub async fn register_new_user(
         }
     };
     let key: Hmac<Sha256> = Hmac::new_from_slice(secret.as_bytes()).unwrap();
-    let mut claims = BTreeMap::new();
-    claims.insert("sub", "someone");
+    // let mut claims = BTreeMap::new();
+    // claims.insert("sub", "someone");
+    let claims = UserClaims {
+        id: usr.id,
+        name: body.name.as_str().to_string(),
+    };
     let token_str = claims.sign_with_key(&key).unwrap();
 
     log::debug!("token: {}", token_str);

@@ -15,6 +15,13 @@ pub struct UserAsResponse {
     pub login: String,
     pub token: String,
 }
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct UserClaims {
+    pub id: i32,
+    pub name: String,
+}
+
 impl UserAsResponse {
     pub fn new(id: i32, name: &str, login: &str, token: String) -> UserAsResponse {
         UserAsResponse {

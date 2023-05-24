@@ -2,7 +2,7 @@ use crate::schema::grups;
 use serde::Serialize;
 
 #[derive(Serialize, Insertable)]
-#[table_name = "grups"]
+#[diesel(table_name = grups)]
 pub struct NewGroup {
     pub id: i32,
     pub name: String,
