@@ -15,7 +15,7 @@ pub async fn validator(
     req: ServiceRequest,
     credentials: BearerAuth,
 ) -> Result<ServiceRequest, (actix_web::error::Error, ServiceRequest)> {
-    println!("{:?}", std::env::vars());
+    // println!("{:?}", std::env::vars());
     let secret = match std::env::var("JWT_SECRET") {
         Ok(s) => s,
         Err(err) => {

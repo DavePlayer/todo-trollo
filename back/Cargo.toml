@@ -26,9 +26,13 @@ dotenv = "0.15.0"
 # database (kill me)
 diesel_cli = "2.0.1"
 diesel = {version="2.0.4", features=["mysql", "uuid"]}
+
+# auth system
 jwt = "0.16.0"
 hmac = "0.12.1"
 sha2 = "0.10.6"
+# additional types for auth
+chrono = {version="0.4.26", features = ["serde"]}
 
 # needs special declaration so it can be serialized
 [dependencies.uuid]

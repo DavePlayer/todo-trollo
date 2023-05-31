@@ -37,7 +37,11 @@ async fn main() -> std::io::Result<()> {
             .wrap(logger)
             // .app_data(db_data)
             .service(index)
-            .service(web::scope("/auth").service(route_handlers::auth::register_new_user))
+            .service(
+                web::scope("/auth")
+                    .service(route_handlers::auth::register::register_new_user)
+                    .service(route_handlers::auth::login::login_user),
+            )
             .service(
                 web::scope("")
                     // .app_data(
@@ -45,8 +49,8 @@ async fn main() -> std::io::Result<()> {
                     //         .realm("Restricted area")
                     //         .scope("email photo"),
                     // )
-                    .wrap(bearre_middleware)
-                    .service(route_handlers::groups::get_groups),
+                    .service(route_handlers::groups::get_groups)
+                    .wrap(bearre_middleware),
             )
     })
     .bind(("127.0.0.1", 8080))?

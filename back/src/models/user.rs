@@ -1,9 +1,16 @@
 use crate::schema::users;
+use chrono::Utc;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct UserToRegister {
     pub name: String,
+    pub login: String,
+    pub password: String,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct UserToLogin {
     pub login: String,
     pub password: String,
 }
@@ -20,6 +27,7 @@ pub struct UserAsResponse {
 pub struct UserClaims {
     pub id: i32,
     pub name: String,
+    pub creation_time: chrono::DateTime<Utc>,
 }
 
 impl UserAsResponse {
