@@ -36,7 +36,7 @@ pub async fn login_user(
         Ok(o) => o,
         Err(err) => return Err(errors::DatabaseErrors::SelectError(err.to_string())),
     };
-    let usr = match usr.into_iter().nth(0) {
+    let usr = match usr.into_iter().next() {
         Some(o) => o,
         None => {
             return Err(DatabaseErrors::UserNotFound(body.0));
@@ -55,7 +55,7 @@ pub async fn login_user(
     // let mut claims = BTreeMap::new();
     // claims.insert("sub", "someone");
     let claims = UserClaims {
-        id: usr.id.clone(),
+        id: usr.id,
         name: usr.name.clone(),
         creation_time: Utc::now(),
     };

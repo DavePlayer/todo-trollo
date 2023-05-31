@@ -10,9 +10,8 @@ impl fmt::Display for DatabaseErrors {
     fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
         match &self {
             DatabaseErrors::UserExists(_) => fmt.write_str("User Already Exists"),
-            Self::UserNotFound(_) => {
-                fmt.write_str(format!("Invalid Credentials. No such user in database").as_str())
-            }
+            Self::UserNotFound(_) => fmt.write_str("Invalid Credentials. No such user in database"),
+            Self::GroupExist(_) => fmt.write_str("group already exists"),
             _ => fmt.write_str("MySQL database error"),
         }
     }
@@ -39,11 +38,11 @@ impl error::ResponseError for DatabaseErrors {
                     user.name
                 )
             }
-            DatabaseErrors::NoClaimsProvided(info) => {
-                log::error!("claims in request not provided: {}", info);
-            }
             DatabaseErrors::UserNotFound(user) => {
                 log::error!("User Not found When loging: {}", user.login);
+            }
+            DatabaseErrors::GroupExist(grp) => {
+                log::error!("Group already exist: {}", grp.name);
             }
         }
         HttpResponse::build(self.status_code())
@@ -57,8 +56,8 @@ impl error::ResponseError for DatabaseErrors {
             DatabaseErrors::SelectError(_) => StatusCode::INTERNAL_SERVER_ERROR,
             DatabaseErrors::InsertError(_) => StatusCode::INTERNAL_SERVER_ERROR,
             DatabaseErrors::UserExists(_) => StatusCode::CONFLICT,
-            DatabaseErrors::NoClaimsProvided(_) => StatusCode::INTERNAL_SERVER_ERROR,
             DatabaseErrors::UserNotFound(_) => StatusCode::FORBIDDEN,
+            DatabaseErrors::GroupExist(_) => StatusCode::CONFLICT,
         }
     }
 }

@@ -17,6 +17,15 @@ diesel::table! {
 }
 
 diesel::table! {
+    tasks (id) {
+        id -> Integer,
+        name -> Text,
+        crossed_by_id -> Nullable<Integer>,
+        group_id -> Integer,
+    }
+}
+
+diesel::table! {
     users (id) {
         id -> Integer,
         name -> Text,
@@ -28,9 +37,12 @@ diesel::table! {
 
 diesel::joinable!(group_assigned_users -> grups (group_id));
 diesel::joinable!(group_assigned_users -> users (user_id));
+diesel::joinable!(tasks -> grups (group_id));
+diesel::joinable!(tasks -> users (crossed_by_id));
 
 diesel::allow_tables_to_appear_in_same_query!(
     group_assigned_users,
     grups,
+    tasks,
     users,
 );

@@ -22,7 +22,7 @@ mod tests;
 
 #[get("/")]
 async fn index() -> String {
-    format!("sup bro!") // <- response with app_name
+    "sup bro!".to_string() // <- response with app_name
 }
 
 #[actix_web::main()]
@@ -49,7 +49,9 @@ async fn main() -> std::io::Result<()> {
                     //         .realm("Restricted area")
                     //         .scope("email photo"),
                     // )
-                    .service(route_handlers::groups::get_groups)
+                    .service(route_handlers::groups::get::get_groups)
+                    .service(route_handlers::groups::create::create_group)
+                    .service(route_handlers::tasks::get_tasks_by_group_id)
                     .wrap(bearre_middleware),
             )
     })

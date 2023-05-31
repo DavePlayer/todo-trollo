@@ -42,7 +42,7 @@ async fn register_new_user_success() {
         .filter(password.eq(user_data.password))
         .execute(&mut conn)
     {
-        println!("removed user. status: {}", status);
+        println!("removed user. status: {status}");
     } else {
         println!("error when removing user");
     }
@@ -80,7 +80,7 @@ async fn register_new_user_2_times_conflict() {
         .filter(password.eq(user_data.password))
         .execute(&mut conn)
     {
-        println!("removed user. status: {}", status);
+        println!("removed user. status: {status}");
     } else {
         println!("error when removing user");
     }

@@ -1,6 +1,9 @@
 use actix_web::web::Json;
 
-use crate::models::user::{UserToLogin, UserToRegister};
+use crate::models::{
+    group::Grup,
+    user::{UserToLogin, UserToRegister},
+};
 
 #[derive(Debug)]
 pub enum DatabaseErrors {
@@ -8,8 +11,8 @@ pub enum DatabaseErrors {
     CantEstablishConnection(String),
     UserExists(Json<UserToRegister>),
     InsertError(String),
-    NoClaimsProvided(String),
     UserNotFound(UserToLogin),
+    GroupExist(Grup),
 }
 mod database_errors;
 
@@ -17,5 +20,6 @@ mod database_errors;
 pub enum AuthErrors {
     InvalidToken(String),
     EnvError(String),
+    NoClaimsProvided(String),
 }
 mod auth_errors;

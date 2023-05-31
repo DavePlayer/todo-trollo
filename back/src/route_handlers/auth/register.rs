@@ -41,7 +41,7 @@ pub async fn register_new_user(
     log::debug!("users: {:?}", checked_users);
 
     // return 409 if there is any user matching with login or name
-    if checked_users.len() > 0 {
+    if !checked_users.is_empty() {
         return Err(errors::DatabaseErrors::UserExists(body));
     }
 
@@ -71,7 +71,7 @@ pub async fn register_new_user(
         Ok(o) => o,
         Err(err) => return Err(errors::DatabaseErrors::SelectError(err.to_string())),
     };
-    let usr = match usr.into_iter().nth(0) {
+    let usr = match usr.into_iter().next() {
         Some(o) => o,
         None => {
             return Err(DatabaseErrors::SelectError(

@@ -1,10 +1,9 @@
 use crate::schema::grups;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Insertable)]
+#[derive(Serialize, Insertable, Deserialize, Debug)]
 #[diesel(table_name = grups)]
 pub struct NewGroup {
-    pub id: i32,
     pub name: String,
     pub creator: i32,
 }
