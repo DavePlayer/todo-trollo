@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import { Routes, Route } from "react-router-dom";
-import {Login} from './pages/Login';
-import {Register} from './pages/Register';
-import { Dashboard } from './pages/Dashboard';
+import { Routes, Route, Navigate } from "react-router-dom";
+import {Login} from './pages/Login/login';
+import {Register} from './pages/Register/register';
+import { Dashboard } from './pages/Dashboard/dashboard';
 
 // when you fetch data use line adres bellow instead of full address
 // import.meta.env.API_URL
@@ -13,7 +13,8 @@ function App() {
   return (
     <div className='main'>
       <Routes>
-        <Route exact path='/' element={<Login />}></Route>
+        <Route exact path='/' element={<Navigate to='/login'/>}></Route>
+        <Route path='/login' element={<Login />}></Route>
         <Route path='/register' element={<Register />}></Route>
         <Route path='/dashboard' element={<Dashboard />}></Route>
       </Routes>
