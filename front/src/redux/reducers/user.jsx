@@ -4,7 +4,7 @@ const initialState = {
     id: "",
     email: "basic@example.com",
     isLoggedIn: false,
-    jwt: ""
+    jwt: "x"
 }
 
 export const userSlice = createSlice ({

@@ -4,6 +4,7 @@ import {Login} from './pages/Login/login';
 import {Register} from './pages/Register/register';
 import { Dashboard } from './pages/Dashboard/dashboard';
 import { Protector } from './pages/Protector/protector';
+import { Logout } from './pages/Logout/logout';
 
 // when you fetch data use line adres bellow instead of full address
 // import.meta.env.API_URL
@@ -17,6 +18,7 @@ function App() {
         <Route exact path='/' element={<Protector />}></Route>
         <Route path='/login' element={<Login />}></Route>
         <Route path='/register' element={<Register />}></Route>
+        <Route path='/logout' element={<Logout />}></Route>
         <Route 
           path='/dashboard' 
           element={
