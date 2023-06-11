@@ -13,7 +13,7 @@ use sha2::Sha256;
 #[post("/register")]
 pub async fn register_new_user(
     body: Json<UserToRegister>,
-) -> Result<Json<UserAsResponse>, errors::DatabaseErrors> {
+) -> Result<Json<UserAsResponse>, errors::UltimateError> {
     log::info!("registering new user {} | {}", body.login, body.name);
     log::debug!("{:?}", body);
     use crate::schema::users::dsl::*;
@@ -22,8 +22,8 @@ pub async fn register_new_user(
     let mut connection = match establish_connection() {
         Ok(o) => o,
         Err(err) => {
-            return Err(errors::DatabaseErrors::CantEstablishConnection(
-                err.to_string(),
+            return Err(errors::UltimateError::Database(
+                errors::DatabaseErrors::CantEstablishConnection(err.to_string()),
             ));
         }
     };
@@ -35,14 +35,20 @@ pub async fn register_new_user(
         .load::<User>(&mut connection)
     {
         Ok(o) => o,
-        Err(err) => return Err(errors::DatabaseErrors::SelectError(err.to_string())),
+        Err(err) => {
+            return Err(errors::UltimateError::Database(
+                errors::DatabaseErrors::SelectError(err.to_string()),
+            ))
+        }
     };
 
     log::debug!("users: {:?}", checked_users);
 
     // return 409 if there is any user matching with login or name
     if !checked_users.is_empty() {
-        return Err(errors::DatabaseErrors::UserExists(body));
+        return Err(errors::UltimateError::Database(
+            errors::DatabaseErrors::UserExists(body),
+        ));
     }
 
     let ans = match insert_into(users)
@@ -55,7 +61,9 @@ pub async fn register_new_user(
     {
         Ok(sth) => sth,
         Err(err) => {
-            return Err(DatabaseErrors::InsertError(err.to_string()));
+            return Err(errors::UltimateError::Database(
+                DatabaseErrors::InsertError(err.to_string()),
+            ));
         }
     };
 
@@ -69,13 +77,17 @@ pub async fn register_new_user(
         .load::<User>(&mut connection)
     {
         Ok(o) => o,
-        Err(err) => return Err(errors::DatabaseErrors::SelectError(err.to_string())),
+        Err(err) => {
+            return Err(errors::UltimateError::Database(
+                errors::DatabaseErrors::SelectError(err.to_string()),
+            ))
+        }
     };
     let usr = match usr.into_iter().next() {
         Some(o) => o,
         None => {
-            return Err(DatabaseErrors::SelectError(
-                "can't get single user from db".to_string(),
+            return Err(errors::UltimateError::Database(
+                DatabaseErrors::SelectError("can't get single user from db".to_string()),
             ));
         }
     };

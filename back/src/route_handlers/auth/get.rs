@@ -13,7 +13,7 @@ use sha2::Sha256;
 #[get("/login")]
 pub async fn login_user(
     body: Json<UserToLogin>,
-) -> Result<Json<UserAsResponse>, errors::DatabaseErrors> {
+) -> Result<Json<UserAsResponse>, errors::UltimateError> {
     log::info!("login user {}", body.login);
     log::debug!("{:?}", body);
     use crate::schema::users::dsl::*;
@@ -22,8 +22,8 @@ pub async fn login_user(
     let mut connection = match establish_connection() {
         Ok(o) => o,
         Err(err) => {
-            return Err(errors::DatabaseErrors::CantEstablishConnection(
-                err.to_string(),
+            return Err(errors::UltimateError::Database(
+                errors::DatabaseErrors::CantEstablishConnection(err.to_string()),
             ));
         }
     };
@@ -34,12 +34,18 @@ pub async fn login_user(
         .load::<User>(&mut connection)
     {
         Ok(o) => o,
-        Err(err) => return Err(errors::DatabaseErrors::SelectError(err.to_string())),
+        Err(err) => {
+            return Err(errors::UltimateError::Database(
+                errors::DatabaseErrors::SelectError(err.to_string()),
+            ))
+        }
     };
     let usr = match usr.into_iter().next() {
         Some(o) => o,
         None => {
-            return Err(DatabaseErrors::UserNotFound(body.0));
+            return Err(errors::UltimateError::Database(
+                DatabaseErrors::UserNotFound(body.0),
+            ));
         }
     };
 

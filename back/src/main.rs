@@ -39,8 +39,8 @@ async fn main() -> std::io::Result<()> {
             .service(index)
             .service(
                 web::scope("/auth")
-                    .service(route_handlers::auth::register::register_new_user)
-                    .service(route_handlers::auth::login::login_user),
+                    .service(route_handlers::auth::post::register_new_user)
+                    .service(route_handlers::auth::get::login_user),
             )
             .service(
                 web::scope("")
@@ -50,8 +50,12 @@ async fn main() -> std::io::Result<()> {
                     //         .scope("email photo"),
                     // )
                     .service(route_handlers::groups::get::get_groups)
-                    .service(route_handlers::groups::create::create_group)
-                    .service(route_handlers::tasks::get_tasks_by_group_id)
+                    .service(route_handlers::groups::post::create_group)
+                    .service(route_handlers::tasks::get::get_tasks_by_group_id)
+                    .service(route_handlers::tasks::post::create_task)
+                    .service(route_handlers::users_handle::get::get_users_for_invite::func)
+                    .service(route_handlers::users_handle::get::get_single_user::func)
+                    .service(route_handlers::users_handle::update::force_assign_users)
                     .wrap(bearre_middleware),
             )
     })

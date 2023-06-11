@@ -13,14 +13,16 @@ use diesel::{insert_into, prelude::*};
 pub async fn create_group(
     req: HttpRequest,
     body: Json<NewGroup>,
-) -> Result<String, Box<dyn std::error::Error>> {
+) -> Result<String, errors::UltimateError> {
     log::info!("inserting new group: {}", body.name);
     let claims = match req.extensions_mut().get::<UserClaims>() {
         Some(o) => o.clone(),
         None => {
-            return Err(Box::new(errors::AuthErrors::NoClaimsProvided(
-                "User Claims not provided in GET /groups".to_string(),
-            )));
+            return Err(errors::UltimateError::Auth(
+                errors::AuthErrors::NoClaimsProvided(
+                    "User Claims not provided in GET /groups".to_string(),
+                ),
+            ));
         }
     };
     log::debug!("User Claims in Request: {:?}", claims);
@@ -30,9 +32,9 @@ pub async fn create_group(
     let mut connection = match establish_connection() {
         Ok(o) => o,
         Err(err) => {
-            return Err(Box::new(errors::DatabaseErrors::CantEstablishConnection(
-                err.to_string(),
-            )))
+            return Err(errors::UltimateError::Database(
+                errors::DatabaseErrors::CantEstablishConnection(err.to_string()),
+            ))
         }
     };
 
@@ -43,24 +45,24 @@ pub async fn create_group(
     {
         Ok(o) => o,
         Err(err) => {
-            return Err(Box::new(errors::DatabaseErrors::SelectError(
-                err.to_string(),
-            )));
+            return Err(errors::UltimateError::Database(
+                errors::DatabaseErrors::SelectError(err.to_string()),
+            ));
         }
     };
 
     if !grps.is_empty() {
-        return Err(Box::new(errors::DatabaseErrors::GroupExist(
-            grps.into_iter().next().unwrap(),
-        )));
+        return Err(errors::UltimateError::Database(
+            errors::DatabaseErrors::GroupExist(grps.into_iter().next().unwrap()),
+        ));
     }
 
     let status = match insert_into(grups).values(&body.0).execute(&mut connection) {
         Ok(o) => o,
         Err(err) => {
-            return Err(Box::new(errors::DatabaseErrors::InsertError(
-                err.to_string(),
-            )));
+            return Err(errors::UltimateError::Database(
+                errors::DatabaseErrors::InsertError(err.to_string()),
+            ));
         }
     };
 
@@ -73,17 +75,19 @@ pub async fn create_group(
     {
         Ok(o) => o,
         Err(err) => {
-            return Err(Box::new(errors::DatabaseErrors::SelectError(
-                err.to_string(),
-            )));
+            return Err(errors::UltimateError::Database(
+                errors::DatabaseErrors::SelectError(err.to_string()),
+            ));
         }
     };
     let inserted_grup = match inserted_grup.into_iter().next() {
         Some(o) => o,
         None => {
-            return Err(Box::new(errors::DatabaseErrors::DataNotFound(
-                "can't get inserted group back after creating new one".to_string(),
-            )));
+            return Err(errors::UltimateError::Database(
+                errors::DatabaseErrors::DataNotFound(
+                    "can't get inserted group back after creating new one".to_string(),
+                ),
+            ));
         }
     };
 
@@ -95,9 +99,9 @@ pub async fn create_group(
     {
         Ok(o) => o,
         Err(err) => {
-            return Err(Box::new(errors::DatabaseErrors::InsertError(
-                err.to_string(),
-            )));
+            return Err(errors::UltimateError::Database(
+                errors::DatabaseErrors::InsertError(err.to_string()),
+            ));
         }
     };
 

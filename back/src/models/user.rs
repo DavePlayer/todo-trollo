@@ -50,3 +50,17 @@ pub struct User {
     pub password: String,
     pub img_url: Option<String>,
 }
+
+#[derive(Debug, Queryable, Insertable, Serialize, Deserialize, Selectable)]
+#[diesel(table_name = users)]
+pub struct UserForInvite {
+    pub id: i32,
+    pub name: String,
+    pub img_url: Option<String>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct UserGroupInvite {
+    pub user_ids: Vec<i32>,
+    pub group_id: i32,
+}

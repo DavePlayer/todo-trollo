@@ -1,6 +1,6 @@
 use crate::{
     models::user::UserToRegister, repository::sql::establish_connection,
-    route_handlers::auth::register::register_new_user,
+    route_handlers::auth::post::register_new_user,
 };
 
 use actix_web::{http::header::ContentType, test, App};
