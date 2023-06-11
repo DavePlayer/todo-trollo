@@ -13,6 +13,7 @@ pub enum DatabaseErrors {
     InsertError(String),
     UserNotFound(UserToLogin),
     GroupExist(Grup),
+    DataNotFound(String),
 }
 mod database_errors;
 

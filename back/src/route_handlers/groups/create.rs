@@ -1,5 +1,5 @@
 use crate::{
-    errors,
+    errors::{self},
     models::{
         group::{Grup, NewGroup},
         user::UserClaims,
@@ -24,7 +24,9 @@ pub async fn create_group(
         }
     };
     log::debug!("User Claims in Request: {:?}", claims);
+
     use crate::schema::grups::dsl::*;
+
     let mut connection = match establish_connection() {
         Ok(o) => o,
         Err(err) => {
@@ -53,7 +55,7 @@ pub async fn create_group(
         )));
     }
 
-    let sth = match insert_into(grups).values(&body.0).execute(&mut connection) {
+    let status = match insert_into(grups).values(&body.0).execute(&mut connection) {
         Ok(o) => o,
         Err(err) => {
             return Err(Box::new(errors::DatabaseErrors::InsertError(
@@ -62,7 +64,49 @@ pub async fn create_group(
         }
     };
 
-    log::info!("created new group(status: {}): \n{:?}", sth, body.0);
+    log::info!("created new group(status: {}): \n{:?}", status, body.0);
+
+    let inserted_grup: Vec<Grup> = match grups
+        .filter(name.eq(&body.name))
+        .filter(creator.eq(&body.creator))
+        .load::<Grup>(&mut connection)
+    {
+        Ok(o) => o,
+        Err(err) => {
+            return Err(Box::new(errors::DatabaseErrors::SelectError(
+                err.to_string(),
+            )));
+        }
+    };
+    let inserted_grup = match inserted_grup.into_iter().next() {
+        Some(o) => o,
+        None => {
+            return Err(Box::new(errors::DatabaseErrors::DataNotFound(
+                "can't get inserted group back after creating new one".to_string(),
+            )));
+        }
+    };
+
+    use crate::schema::group_assigned_users::dsl::*;
+
+    let status = match insert_into(group_assigned_users)
+        .values((group_id.eq(inserted_grup.id), user_id.eq(&body.creator)))
+        .execute(&mut connection)
+    {
+        Ok(o) => o,
+        Err(err) => {
+            return Err(Box::new(errors::DatabaseErrors::InsertError(
+                err.to_string(),
+            )));
+        }
+    };
+
+    log::info!(
+        "inserted creator({}) to newly created group({}): {}",
+        body.creator,
+        inserted_grup.name,
+        status
+    );
 
     Ok("successfully created new group".to_string())
 }

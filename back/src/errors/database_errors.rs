@@ -12,6 +12,9 @@ impl fmt::Display for DatabaseErrors {
             DatabaseErrors::UserExists(_) => fmt.write_str("User Already Exists"),
             Self::UserNotFound(_) => fmt.write_str("Invalid Credentials. No such user in database"),
             Self::GroupExist(_) => fmt.write_str("group already exists"),
+            Self::DataNotFound(_) => {
+                fmt.write_str("Server internal error. Admin should check logs")
+            }
             _ => fmt.write_str("MySQL database error"),
         }
     }
@@ -44,6 +47,9 @@ impl error::ResponseError for DatabaseErrors {
             DatabaseErrors::GroupExist(grp) => {
                 log::error!("Group already exist: {}", grp.name);
             }
+            DatabaseErrors::DataNotFound(info) => {
+                log::error!("Couldn't get data: {}", info);
+            }
         }
         HttpResponse::build(self.status_code())
             .insert_header(ContentType::html())
@@ -58,6 +64,7 @@ impl error::ResponseError for DatabaseErrors {
             DatabaseErrors::UserExists(_) => StatusCode::CONFLICT,
             DatabaseErrors::UserNotFound(_) => StatusCode::FORBIDDEN,
             DatabaseErrors::GroupExist(_) => StatusCode::CONFLICT,
+            DatabaseErrors::DataNotFound(_) => StatusCode::INTERNAL_SERVER_ERROR,
         }
     }
 }
