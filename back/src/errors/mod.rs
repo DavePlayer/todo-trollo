@@ -17,6 +17,7 @@ pub enum DatabaseErrors {
     GroupExist(Grup),
     DataNotFound(String),
     DataExists(String),
+    NoSuchUser(String),
     AlreadyInGroup(Vec<i32>),
 }
 mod database_errors;

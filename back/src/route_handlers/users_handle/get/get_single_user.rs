@@ -44,11 +44,9 @@ pub async fn func(params: web::Path<UserParams>) -> Result<Json<UserForInvite>, 
     let user = match userss.into_iter().next() {
         Some(o) => o,
         None => {
-            return Err(UltimateError::Database(
-                errors::DatabaseErrors::DataNotFound(
-                    "User not found in database (geting single user)".to_string(),
-                ),
-            ));
+            return Err(UltimateError::Database(errors::DatabaseErrors::NoSuchUser(
+                "User not found in database (geting single user)".to_string(),
+            )));
         }
     };
 

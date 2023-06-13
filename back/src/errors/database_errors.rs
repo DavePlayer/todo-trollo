@@ -5,7 +5,6 @@ use actix_web::{
     HttpResponse,
 };
 use std::{error::Error, fmt};
-
 impl fmt::Display for DatabaseErrors {
     fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
         match &self {
@@ -14,6 +13,7 @@ impl fmt::Display for DatabaseErrors {
             Self::GroupExist(_) => fmt.write_str("group already exists"),
             Self::DataNotFound(_) => fmt.write_str("There is no data of such type"),
             Self::DataExists(_) => fmt.write_str("Data already exists"),
+            Self::NoSuchUser(_) => fmt.write_str("there is no such user"),
             Self::AlreadyInGroup(_) => {
                 fmt.write_str("one of the given user is already in one of the group")
             }
@@ -61,6 +61,13 @@ impl error::ResponseError for DatabaseErrors {
                     info
                 );
             }
+            DatabaseErrors::NoSuchUser(info) => {
+                log::error!("No Such user {}", info);
+            }
+            #[allow(unreachable_patterns)]
+            _ => {
+                log::error!("forgot to edit database errs");
+            }
         };
         HttpResponse::build(self.status_code())
             .insert_header(ContentType::html())
@@ -78,6 +85,10 @@ impl error::ResponseError for DatabaseErrors {
             DatabaseErrors::DataNotFound(_) => StatusCode::INTERNAL_SERVER_ERROR,
             DatabaseErrors::DataExists(_) => StatusCode::CONFLICT,
             DatabaseErrors::AlreadyInGroup(_) => StatusCode::CONFLICT,
+            DatabaseErrors::NoSuchUser(_) => StatusCode::NOT_FOUND,
+
+            #[allow(unreachable_patterns)]
+            _ => StatusCode::INTERNAL_SERVER_ERROR,
         }
     }
 }

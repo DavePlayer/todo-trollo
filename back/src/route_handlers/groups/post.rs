@@ -40,7 +40,7 @@ pub async fn create_group(
 
     let grps: Vec<Grup> = match grups
         .filter(name.eq(&body.name))
-        .filter(creator.eq(&body.creator))
+        .filter(creator.eq(&claims.id))
         .load::<Grup>(&mut connection)
     {
         Ok(o) => o,
@@ -57,7 +57,10 @@ pub async fn create_group(
         ));
     }
 
-    let status = match insert_into(grups).values(&body.0).execute(&mut connection) {
+    let status = match insert_into(grups)
+        .values((name.eq(&body.name), creator.eq(&claims.id)))
+        .execute(&mut connection)
+    {
         Ok(o) => o,
         Err(err) => {
             return Err(errors::UltimateError::Database(
@@ -70,7 +73,7 @@ pub async fn create_group(
 
     let inserted_grup: Vec<Grup> = match grups
         .filter(name.eq(&body.name))
-        .filter(creator.eq(&body.creator))
+        .filter(creator.eq(&claims.id))
         .load::<Grup>(&mut connection)
     {
         Ok(o) => o,
@@ -94,7 +97,7 @@ pub async fn create_group(
     use crate::schema::group_assigned_users::dsl::*;
 
     let status = match insert_into(group_assigned_users)
-        .values((group_id.eq(inserted_grup.id), user_id.eq(&body.creator)))
+        .values((group_id.eq(inserted_grup.id), user_id.eq(&claims.id)))
         .execute(&mut connection)
     {
         Ok(o) => o,
@@ -107,7 +110,7 @@ pub async fn create_group(
 
     log::info!(
         "inserted creator({}) to newly created group({}): {}",
-        body.creator,
+        &claims.id,
         inserted_grup.name,
         status
     );

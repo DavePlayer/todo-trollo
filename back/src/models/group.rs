@@ -6,7 +6,6 @@ use serde::{Deserialize, Serialize};
 #[diesel(table_name = grups)]
 pub struct NewGroup {
     pub name: String,
-    pub creator: i32,
 }
 
 #[derive(Debug, Queryable, AsChangeset, Serialize)]
