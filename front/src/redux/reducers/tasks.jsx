@@ -30,14 +30,14 @@ const initialState = {
     ]
 }
 
-export const groupsSlice = createSlice({
-    name: "groups",
+export const tasksSlice = createSlice({
+    name: "tasks",
     initialState,
     reducers: {
 
     },
 })
 
-export const {} = groupsSlice.actions;
+export const {} = tasksSlice.actions;
 
-export default groupsSlice.reducer;
+export default tasksSlice.reducer;

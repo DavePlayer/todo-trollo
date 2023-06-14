@@ -1,5 +1,6 @@
 import { useSelector } from "react-redux";
 import { Navbar } from "../../shared/Navbar/navbar";
+import { Group } from "../../shared/Group/group";
 
 export const Dashboard = () => {
     const groups = useSelector((state) => state.groups);
@@ -9,11 +10,7 @@ export const Dashboard = () => {
             <div className="mainspace">
                 {groups.loading && <p>Loading...</p>}
                 {!groups.loading && groups.data.map(group => (
-                    <div className="group" key={group.id}>
-                        <h2> {group.title} </h2>
-                        <p>TASKS</p>
-                        <p>Created by: {group.owner}</p>
-                    </div>
+                    <Group key={group.id} title={group.title} owner={group.owner}></Group>
                 ))}
             </div>
         </div>
