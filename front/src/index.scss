@@ -207,3 +207,20 @@ form {
         border-radius: 1rem;
     }
 }
+
+.task-list{
+    @include flex-col();
+    width: 100%;
+    .task{
+        @include flex-col();
+        align-items: flex-start;
+        padding: 1rem;
+        background: white;
+        border-radius: 0.5rem;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    .crossed{
+        text-decoration: line-through;
+    }
+}

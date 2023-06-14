@@ -10,7 +10,7 @@ export const Dashboard = () => {
             <div className="mainspace">
                 {groups.loading && <p>Loading...</p>}
                 {!groups.loading && groups.data.map(group => (
-                    <Group key={group.id} title={group.title} owner={group.owner}></Group>
+                    <Group key={group.id} groupid={group.id} title={group.title} owner={group.owner}></Group>
                 ))}
             </div>
         </div>
