@@ -3,7 +3,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 const initialState = {
     loading: false,
     data: []
-}
+};
 
 export const fetchGroups = createAsyncThunk(
     '/groups',
@@ -28,7 +28,7 @@ export const fetchGroups = createAsyncThunk(
             },2000)
         })
     }
-) 
+);
 
 export const groupsSlice = createSlice({
     name: "groups",
@@ -49,7 +49,7 @@ export const groupsSlice = createSlice({
         });
 
     },
-})
+});
 
 export const {} = groupsSlice.actions;
 
