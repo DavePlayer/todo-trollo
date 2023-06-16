@@ -2,8 +2,14 @@ use crate::{
     errors::{self, DatabaseErrors},
     models::user::{User, UserAsResponse, UserClaims, UserToRegister},
     repository::sql::establish_connection,
+    websockets::server::ChatServer,
 };
-use actix_web::{post, web::Json};
+use actix::Addr;
+use actix_web::{
+    post,
+    web::{Data, Json},
+    HttpRequest,
+};
 use chrono::Utc;
 use diesel::{insert_into, prelude::*};
 use hmac::{Hmac, Mac};
@@ -12,10 +18,11 @@ use sha2::Sha256;
 
 #[post("/register")]
 pub async fn register_new_user(
+    data: Data<Addr<ChatServer>>,
+    _req: HttpRequest,
     body: Json<UserToRegister>,
 ) -> Result<Json<UserAsResponse>, errors::UltimateError> {
     log::info!("registering new user {} | {}", body.login, body.name);
-    log::debug!("{:?}", body);
     use crate::schema::users::dsl::*;
 
     // establish connection with database
@@ -117,6 +124,14 @@ pub async fn register_new_user(
         &body.name,
         ans
     );
+
+    let data = data.get_ref();
+    data.do_send(crate::websockets::server::ClientMessage {
+        id: 1,
+        msg: format!("/registered {}", &body.name),
+        room: "Main".to_string(),
+    });
+
     Ok(Json(UserAsResponse::new(
         usr.id,
         body.name.as_str(),

@@ -28,6 +28,9 @@ pub enum AuthErrors {
     InvalidToken(String),
     EnvError(String),
     NoClaimsProvided(String),
+
+    #[allow(dead_code)]
+    WebSocketError(String),
 }
 mod auth_errors;
 

@@ -5,15 +5,23 @@ use crate::{
         user::UserClaims,
     },
     repository::sql::establish_connection,
+    websockets::server::ChatServer,
 };
-use actix_web::{patch, web::Json, HttpMessage, HttpRequest};
+use actix::Addr;
+use actix_web::{
+    patch,
+    web::{Data, Json},
+    HttpMessage, HttpRequest,
+};
 use diesel::{dsl::sql, prelude::*};
 
 #[patch("/cross")]
 pub async fn cross_task(
+    data: Data<Addr<ChatServer>>,
     req: HttpRequest,
     body: Json<TaskToCross>,
 ) -> Result<String, errors::UltimateError> {
+    let data = data.get_ref();
     let claims = match req.extensions_mut().get::<UserClaims>() {
         Some(o) => o.clone(),
         None => {
@@ -76,6 +84,18 @@ pub async fn cross_task(
 
         log::info!("successfully de-crossed task({}): {}", penis, update_status);
 
+        data.do_send(crate::websockets::server::ClientMessage {
+            id: 1,
+            msg: format!(
+                "/taskUncrossed {}",
+                match serde_json::to_string(&task_in_server) {
+                    Ok(o) => o,
+                    Err(_) => "{}".to_string(),
+                }
+            ),
+            room: "Main".to_string(),
+        });
+
         return Ok("Successfully de-crossed task".to_string());
     }
 
@@ -93,6 +113,18 @@ pub async fn cross_task(
     };
 
     log::info!("successfully crossed task: {}", update_status);
+
+    data.do_send(crate::websockets::server::ClientMessage {
+        id: 1,
+        msg: format!(
+            "/taskCrossed {}",
+            match serde_json::to_string(&task_in_server) {
+                Ok(o) => o,
+                Err(_) => "{}".to_string(),
+            }
+        ),
+        room: "Main".to_string(),
+    });
 
     Ok("Successfully crossed task".to_string())
 }

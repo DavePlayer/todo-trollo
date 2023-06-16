@@ -15,6 +15,7 @@ impl fmt::Display for AuthErrors {
             Self::NoClaimsProvided(_) => {
                 fmt.write_str("Server error. not your fault. check server logs for more info")
             }
+            Self::WebSocketError(_) => fmt.write_str("error in websockets"),
             _ => fmt.write_str("error when loading token"),
         }
     }
@@ -34,6 +35,9 @@ impl error::ResponseError for AuthErrors {
             AuthErrors::NoClaimsProvided(info) => {
                 log::error!("claims in request not provided: {}", info);
             }
+            AuthErrors::WebSocketError(info) => {
+                log::error!("websocker error: {}", info);
+            }
         }
         HttpResponse::build(self.status_code())
             .insert_header(ContentType::html())
@@ -45,6 +49,7 @@ impl error::ResponseError for AuthErrors {
             AuthErrors::EnvError(_) => StatusCode::INTERNAL_SERVER_ERROR,
             AuthErrors::InvalidToken(_) => StatusCode::FORBIDDEN,
             AuthErrors::NoClaimsProvided(_) => StatusCode::INTERNAL_SERVER_ERROR,
+            AuthErrors::WebSocketError(_) => StatusCode::INTERNAL_SERVER_ERROR,
         }
     }
 }
