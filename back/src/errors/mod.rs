@@ -13,10 +13,11 @@ pub enum DatabaseErrors {
     CantEstablishConnection(String),
     UserExists(Json<UserToRegister>),
     InsertError(String),
+    UpdateError(String),
     UserNotFound(UserToLogin),
     GroupExist(Grup),
-    DataNotFound(String),
-    DataExists(String),
+    DataNotFound(String, String),
+    DataExists(String, String),
     NoSuchUser(String),
     AlreadyInGroup(Vec<i32>),
 }

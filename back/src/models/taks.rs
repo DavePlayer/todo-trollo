@@ -16,3 +16,8 @@ pub struct TaskToInsert {
     pub name: String,
     pub group_id: i32,
 }
+
+#[derive(Serialize, Debug, Deserialize)]
+pub struct TaskToCross {
+    pub id: i32,
+}

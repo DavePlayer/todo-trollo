@@ -89,6 +89,7 @@ pub async fn create_group(
             return Err(errors::UltimateError::Database(
                 errors::DatabaseErrors::DataNotFound(
                     "can't get inserted group back after creating new one".to_string(),
+                    "Internal SErver Error. Check logs".to_string(),
                 ),
             ));
         }

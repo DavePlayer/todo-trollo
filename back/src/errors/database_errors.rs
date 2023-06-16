@@ -11,8 +11,8 @@ impl fmt::Display for DatabaseErrors {
             DatabaseErrors::UserExists(_) => fmt.write_str("User Already Exists"),
             Self::UserNotFound(_) => fmt.write_str("Invalid Credentials. No such user in database"),
             Self::GroupExist(_) => fmt.write_str("group already exists"),
-            Self::DataNotFound(_) => fmt.write_str("There is no data of such type"),
-            Self::DataExists(_) => fmt.write_str("Data already exists"),
+            Self::DataNotFound(_, msg) => fmt.write_str(msg),
+            Self::DataExists(_, msg) => fmt.write_str(msg),
             Self::NoSuchUser(_) => fmt.write_str("there is no such user"),
             Self::AlreadyInGroup(_) => {
                 fmt.write_str("one of the given user is already in one of the group")
@@ -36,6 +36,9 @@ impl error::ResponseError for DatabaseErrors {
             DatabaseErrors::InsertError(err) => {
                 log::error!("error when using insert statement to database:\n {}", err);
             }
+            DatabaseErrors::UpdateError(err) => {
+                log::error!("error when using update statement to database:\n {}", err);
+            }
             DatabaseErrors::UserExists(user) => {
                 log::error!(
                     "Tried to register existing user: login: {} | name: {}",
@@ -49,10 +52,10 @@ impl error::ResponseError for DatabaseErrors {
             DatabaseErrors::GroupExist(grp) => {
                 log::error!("Group already exist: {}", grp.name);
             }
-            DatabaseErrors::DataNotFound(info) => {
+            DatabaseErrors::DataNotFound(info, _) => {
                 log::error!("Couldn't get data: {}", info);
             }
-            DatabaseErrors::DataExists(info) => {
+            DatabaseErrors::DataExists(info, _) => {
                 log::error!("trying to insert existing data: {}", info);
             }
             DatabaseErrors::AlreadyInGroup(info) => {
@@ -82,8 +85,8 @@ impl error::ResponseError for DatabaseErrors {
             DatabaseErrors::UserExists(_) => StatusCode::CONFLICT,
             DatabaseErrors::UserNotFound(_) => StatusCode::FORBIDDEN,
             DatabaseErrors::GroupExist(_) => StatusCode::CONFLICT,
-            DatabaseErrors::DataNotFound(_) => StatusCode::INTERNAL_SERVER_ERROR,
-            DatabaseErrors::DataExists(_) => StatusCode::CONFLICT,
+            DatabaseErrors::DataNotFound(_, _) => StatusCode::INTERNAL_SERVER_ERROR,
+            DatabaseErrors::DataExists(_, _) => StatusCode::CONFLICT,
             DatabaseErrors::AlreadyInGroup(_) => StatusCode::CONFLICT,
             DatabaseErrors::NoSuchUser(_) => StatusCode::NOT_FOUND,
 

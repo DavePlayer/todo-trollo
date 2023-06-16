@@ -38,7 +38,10 @@ pub async fn create_task(body: Json<TaskToInsert>) -> Result<String, errors::Ult
 
     if !tasks_check_vec.is_empty() {
         return Err(errors::UltimateError::Database(
-            errors::DatabaseErrors::DataExists("creating task that already exist".to_string()),
+            errors::DatabaseErrors::DataExists(
+                "creating task that already exist in some group".to_string(),
+                "Task already exist in specified group".to_string(),
+            ),
         ));
     }
 
