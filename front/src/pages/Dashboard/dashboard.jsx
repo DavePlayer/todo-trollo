@@ -12,14 +12,23 @@ export const Dashboard = () => {
         dispatch(fetchGroups({ token: user.jwt }));
     },[])
     return(
-        <div className="dashboard">
-            <Navbar/>
-            <div className="mainspace">
-                {groups.loading && <p>Loading...</p>}
-                {!groups.loading && groups.data.map(group => (
-                    <Group key={group.id} groupid={group.id} title={group.title} owner={group.owner}></Group>
-                ))}
-            </div>
-        </div>
+        <>
+            {groups.loading ? (
+                <div className="dashboard">
+                    <Navbar/>
+                    <div className="mainspace">
+                        <p>Loading...</p>
+                    </div>
+                </div>
+            ): (
+                <div className="dashboard">
+                    <Navbar/>
+                    <div className="mainspace">
+                        {groups.data.map(group => (<Group key={group.id} groupid={group.id} title={group.title} owner={group.owner}></Group>))}
+                    </div>
+                </div>
+            )}
+        </>
+        
     );
 }
