@@ -12,7 +12,7 @@ export const Login = () => {
         e.preventDefault();
         console.log(form)
         if (form.login.length <= 0 || form.password.length <= 0)
-            return console.error("Something is not yest");
+            return console.error("Something is not yes");
         dispatch(fetchLogin(form));
     };
     const handleChange = (e) => {
