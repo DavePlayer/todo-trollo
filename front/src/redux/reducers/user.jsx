@@ -34,7 +34,6 @@ export const userSlice = createSlice ({
     reducers: {
         logout: (state) => {
             console.log('logging out...');
-            localStorage.removeItem("token");
             return(state = {
                 id: "",
                 email: "",
@@ -53,7 +52,6 @@ export const userSlice = createSlice ({
             state.id = action.payload.id;
             state.email = action.payload.email;
             state.jwt = action.payload.jwt;
-            localStorage.setItem("token", state.jwt);
         });
         builder.addCase(fetchLogin.rejected, (state, action) => {
             console.error(action.error.message);
