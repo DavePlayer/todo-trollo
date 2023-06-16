@@ -1,9 +1,16 @@
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Navbar } from "../../shared/Navbar/navbar";
 import { Group } from "../../shared/Group/group";
+import { useEffect } from "react";
+import { fetchGroups } from "../../redux/reducers/groups";
 
 export const Dashboard = () => {
     const groups = useSelector((state) => state.groups);
+    const user = useSelector((state) => state.user);
+    const dispatch = useDispatch();
+    useEffect(() => {
+        dispatch(fetchGroups({ token: user.jwt }));
+    },[])
     return(
         <div className="dashboard">
             <Navbar/>
