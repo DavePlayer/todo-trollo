@@ -1,0 +1,51 @@
+version: '3.7'
+
+services:
+
+  phpmyadmin:
+    container_name: phpmyadmin
+    image: phpmyadmin/phpmyadmin:latest
+    restart: always
+    ports:
+      - 8081:80
+    networks:
+      - database
+  db:
+    container_name: mysql-trello
+    image: mysql:8.0-oracle
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+    ports:
+      - "3306:3306"
+    networks:
+      database:
+        ipv4_address: 172.21.0.69
+  back:
+    container_name: backend-trello
+    restart: on-failure
+    depends_on:
+        - db
+    environment: 
+        DATABASE_URL: "mysql://root:secret@172.21.0.69:3306/todotrello"
+        JWT_SECRET: "super_secret"
+        RUST_LOG: "info"
+    build: ./back
+    ports:
+        - 8080:8080
+    links:
+        - db
+    networks:
+      - backend
+      - database
+networks:
+  database:
+    driver: bridge
+    ipam:
+     config:
+       - subnet: 172.21.0.0/24
+
+  backend:
+    driver: bridge
+volumes:
+  db-vol:
