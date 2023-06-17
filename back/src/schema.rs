@@ -37,6 +37,7 @@ diesel::table! {
 
 diesel::joinable!(group_assigned_users -> grups (group_id));
 diesel::joinable!(group_assigned_users -> users (user_id));
+diesel::joinable!(grups -> users (creator));
 diesel::joinable!(tasks -> grups (group_id));
 diesel::joinable!(tasks -> users (crossed_by_id));
 

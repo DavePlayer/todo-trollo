@@ -5,6 +5,7 @@ use std::sync::{atomic::AtomicUsize, Arc};
 
 use actix::Actor;
 
+use actix_cors::Cors;
 #[allow(unused_imports)]
 use actix_files as fs;
 
@@ -46,10 +47,12 @@ async fn main() -> std::io::Result<()> {
         let logger = Logger::default();
         // App state
         // We are keeping a count of the number of visitors
+        let cors = Cors::default().supports_credentials();
         let bearre_middleware = HttpAuthentication::bearer(middlewares::validate_jwt::validator);
         // Start chat server actor
         App::new()
             .wrap(logger)
+            .wrap(cors)
             .app_data(Data::new(app_state.clone()))
             .app_data(Data::new(server.clone()))
             // .app_data(db_data)
@@ -81,7 +84,7 @@ async fn main() -> std::io::Result<()> {
                     .wrap(bearre_middleware),
             )
     })
-    .bind(("127.0.0.1", 8080))?
+    .bind(("0.0.0.0", 8080))?
     .run()
     .await
 }
