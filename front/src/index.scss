@@ -1,0 +1,226 @@
+@mixin flex-col(){
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;  
+}
+@mixin flex-label(){
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+}
+@mixin flex-row(){
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 2rem;
+
+}
+@mixin uni-shadow(){
+    -webkit-box-shadow: 0px 0px 20px 5px rgb(23, 23, 23);
+    -moz-box-shadow: 0px 0px 20px 5px rgb(23, 23, 23);
+    box-shadow: 0px 0px 20px 5px rgb(23, 23, 23);
+}
+@mixin group-scrollbar(){
+    &::-webkit-scrollbar {
+        height: 1.2rem;
+    }
+    &::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+    &::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 1rem;
+    }
+    &::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
+}
+
+::-webkit-scrollbar {
+    height: 1.2rem;
+}
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 1rem;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+*{
+    margin: 0;
+    padding: 0;
+}
+a{
+    text-decoration: none;
+    color: inherit;
+    &:hover{
+        cursor: pointer;
+        opacity: 50% ;
+    }
+    &:active{
+        opacity: 50%;
+    }
+}
+body{
+    height: 100vh;
+    background-image: linear-gradient(206deg, rgba(80,9,121,1) 0%, rgba(0,212,255,1) 100%);
+    background-attachment: fixed;
+    background-size: cover;
+    text-align: center;
+    font-family: Arial, Helvetica, sans-serif;
+    #root{
+        height: 100%;
+    }
+}
+.main {   
+    height: 100%;
+    color:white;
+    display: flex;
+    align-items: center;
+}
+
+.formPage {
+    @include uni-shadow();
+    max-width: 600px;
+    width: 100%; 
+    border-radius: 5px;
+    padding: 20px 0;
+    margin: 0 auto;
+    background: white;
+    color: rgba(45,98,180,1);
+}
+
+form {
+    @include flex-col();
+    font-size: 1.2em;
+    margin: 20px auto;
+    *{
+        padding: 10px;
+        text-align: left;
+    }
+    label{
+        @include flex-label();
+        background: #7daeff;
+        color: white;
+        border-radius: 50px;
+        width: 75%;
+        &:hover{
+            background: #507fca;
+            cursor: text;
+        }
+    }
+    input{
+        background: none;
+        border: none;
+        border-radius: 50px;
+        color: inherit;
+        outline: none;
+        flex-grow: 2;
+    }
+    button{
+        width: 50%;
+        text-align: center;
+        background: #7daeff;
+        border: none;
+        border-radius: 50px;
+        color: white;
+        font-size: 1.2rem;
+        &:hover{
+            background: #507fca;
+            cursor: pointer;
+        }
+        &:active{
+            outline: auto;
+        }
+    }
+}
+
+.dashboard{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-items: flex-start;
+    gap: 10px;
+}
+
+.navbar{
+    // @include uni-shadow();
+    width: 100%;
+    box-sizing: border-box;
+    padding: 1rem;
+    background: white;
+    background-color: rgba(0,212,255,0);
+    color: white;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    a{
+        width: 5rem;
+        padding: 0.5rem;
+        text-align: center;
+        background: #7daeff;
+        border: none;
+        border-radius: 50px;
+        color: white;
+        font-size: 1.2rem;
+        &:hover{
+            background: #507fca;
+            cursor: pointer;
+        }
+        &:active{
+            outline: auto;
+        }
+    }
+}
+
+.mainspace{
+    @include flex-row();
+    width: 100%;
+    box-sizing: border-box;
+    padding: 3rem 4rem;
+    flex-grow: 2;
+    background-color: #ffffff90;
+    border-radius: 0.5rem;
+    overflow-x: scroll;
+    .group{
+        @include flex-col();
+        @include group-scrollbar();
+        padding: 1rem 2rem;
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        min-width: 30rem;
+        min-height: 50%;
+        max-height: 80%;
+        background: #ebecf0;
+        color: black;
+        border-radius: 1rem;
+    }
+}
+
+.task-list{
+    @include flex-col();
+    width: 100%;
+    .task{
+        @include flex-col();
+        align-items: flex-start;
+        padding: 1rem;
+        background: white;
+        border-radius: 0.5rem;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    .crossed{
+        text-decoration: line-through;
+    }
+}
