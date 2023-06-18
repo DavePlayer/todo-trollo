@@ -3,16 +3,19 @@ use crate::{
     models::user::{User, UserAsResponse, UserClaims, UserToLogin},
     repository::sql::establish_connection,
 };
-use actix_web::{get, web::Json};
+use actix_web::{
+    get,
+    web::{self, Json},
+};
 use chrono::Utc;
 use diesel::prelude::*;
 use hmac::{Hmac, Mac};
 use jwt::SignWithKey;
 use sha2::Sha256;
 
-#[get("/login")]
+#[get("/login/{login}/{password}")]
 pub async fn login_user(
-    body: Json<UserToLogin>,
+    body: web::Path<UserToLogin>,
 ) -> Result<Json<UserAsResponse>, errors::UltimateError> {
     log::info!("login user {}", body.login);
     log::debug!("{:?}", body);
@@ -44,7 +47,10 @@ pub async fn login_user(
         Some(o) => o,
         None => {
             return Err(errors::UltimateError::Database(
-                DatabaseErrors::UserNotFound(body.0),
+                DatabaseErrors::UserNotFound(UserToLogin {
+                    login: body.login.clone(),
+                    password: body.password.clone(),
+                }),
             ));
         }
     };

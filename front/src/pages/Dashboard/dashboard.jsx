@@ -3,6 +3,7 @@ import { Navbar } from "../../shared/Navbar/navbar";
 import { Group } from "../../shared/Group/group";
 import { useEffect } from "react";
 import { fetchGroups } from "../../redux/reducers/groups";
+import { fetchTasks } from "../../redux/reducers/tasks";
 
 export const Dashboard = () => {
     const groups = useSelector((state) => state.groups);
@@ -10,25 +11,37 @@ export const Dashboard = () => {
     const dispatch = useDispatch();
     useEffect(() => {
         dispatch(fetchGroups({ token: user.jwt }));
-    },[])
-    return(
+        dispatch(fetchTasks({ token: user.jwt }));
+    }, []);
+    return (
         <>
             {groups.loading ? (
-                <div className="dashboard">
-                    <Navbar/>
-                    <div className="mainspace">
-                        <p>Loading...</p>
+                <section className="dash-wrapper">
+                    <div className="dashboard">
+                        <div className="mainspace">
+                            <p>Loading ...</p>
+                        </div>
                     </div>
-                </div>
-            ): (
-                <div className="dashboard">
-                    <Navbar/>
-                    <div className="mainspace">
-                        {groups.data.map(group => (<Group key={group.id} groupid={group.id} title={group.title} owner={group.owner}></Group>))}
+                </section>
+            ) : (
+                <section className="dash-wrapper">
+                    <div className="dashboard">
+                        <div className="mainspace">
+                            <header>
+                                <button>Create new Group</button>
+                            </header>
+                            {groups.data.map((group) => (
+                                <Group
+                                    key={group.id}
+                                    groupid={group.id}
+                                    name={group.name}
+                                    creator={group.creator}
+                                ></Group>
+                            ))}
+                        </div>
                     </div>
-                </div>
+                </section>
             )}
         </>
-        
     );
-}
+};

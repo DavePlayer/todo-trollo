@@ -1,25 +1,22 @@
-import { useSelector } from "react-redux"
+import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import { Task } from "./task";
 
-export const TasksList = ({ groupid }) => {
-    const tasks = useSelector((state) => state.tasks);
+export const TasksList = ({ groupId }) => {
+    const tasks = useSelector((root) => root.tasks);
+    useEffect(() => {
+        // get async reducer tasks
+    }, []);
     return (
-        <div className="task-list" >
+        <div className="task-list">
             {tasks.loading && <p>Loading...</p>}
-            {tasks.data.filter(task => task.groupid === groupid).length === 0 && <p>No tasks yet!</p>}
-            {!tasks.loading && tasks.data.filter(task => task.groupid === groupid).map(task => (
-                task.isCrossed && 
-                    <div className="task crossed" key={ task.id }>
-                        <h3>{ task.title }</h3>
-                        <p>{ task.text }</p>
-                        <p>Created by: { task.owner }</p>
-                    </div> ||
-                !task.isCrossed && 
-                    <div className="task" key={ task.id }>
-                        <h3>{ task.title }</h3>
-                        <p>{ task.text }</p>
-                        <p>Created by: { task.owner }</p>
-                    </div>
-            ))}
+            {tasks.data.filter((task) => task.group_id === groupId).length === 0 && (
+                <p>No tasks yet!</p>
+            )}
+            {!tasks.loading &&
+                tasks.data
+                    .filter((task) => task.group_id === groupId)
+                    .map((task) => <Task task={task} key={task.id} />)}
         </div>
-    )
-}
+    );
+};

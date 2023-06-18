@@ -3,25 +3,14 @@ use crate::{
     models::{taks::Task, user::UserClaims},
     repository::sql::establish_connection,
 };
-use actix_web::{
-    get,
-    web::{self, Json},
-    HttpMessage, HttpRequest,
-};
+use actix_web::{get, web::Json, HttpMessage, HttpRequest};
 use diesel::prelude::*;
-use serde::Deserialize;
 
-#[derive(Deserialize)]
-pub struct TaskParams {
-    pub group_id: i32,
-}
-
-#[get("/tasks/{group_id}")]
+#[get("/tasks")]
 pub async fn get_tasks_by_group_id(
     req: HttpRequest,
-    task_params: web::Path<TaskParams>,
 ) -> Result<Json<Vec<Task>>, errors::UltimateError> {
-    log::info!("fetching tasks from group_id: {}", task_params.group_id);
+    log::info!("fetching tasks");
     let claims = match req.extensions_mut().get::<UserClaims>() {
         Some(o) => o.clone(),
         None => {
@@ -47,10 +36,7 @@ pub async fn get_tasks_by_group_id(
     // no right_join which is bullshit
     // chatGPT remade query with inner joins (tried with left but sth was going wrong)
     // for future this select must be like this. In other cases it screams like banshee
-    let tsk = match tasks
-        .filter(group_id.eq(task_params.group_id))
-        .load::<Task>(&mut connection)
-    {
+    let tsk = match tasks.load::<Task>(&mut connection) {
         Ok(o) => o,
         Err(err) => {
             return Err(errors::UltimateError::Database(

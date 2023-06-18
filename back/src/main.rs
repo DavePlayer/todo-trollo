@@ -47,7 +47,11 @@ async fn main() -> std::io::Result<()> {
         let logger = Logger::default();
         // App state
         // We are keeping a count of the number of visitors
-        let cors = Cors::default().supports_credentials();
+        let cors = Cors::default()
+            .allow_any_origin()
+            .allow_any_method()
+            .allow_any_header()
+            .max_age(3600);
         let bearre_middleware = HttpAuthentication::bearer(middlewares::validate_jwt::validator);
         // Start chat server actor
         App::new()
