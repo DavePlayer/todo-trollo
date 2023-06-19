@@ -1,31 +1,30 @@
-@mixin flex-col(){
+@mixin flex-col() {
     display: flex;
     flex-wrap: wrap;
     flex-direction: column;
     align-items: center;
-    gap: 1rem;  
+    gap: 1rem;
 }
-@mixin flex-label(){
+@mixin flex-label() {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     align-items: center;
 }
-@mixin flex-row(){
+@mixin flex-row() {
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
     align-items: flex-start;
     justify-content: flex-start;
     gap: 2rem;
-
 }
-@mixin uni-shadow(){
+@mixin uni-shadow() {
     -webkit-box-shadow: 0px 0px 20px 5px rgb(23, 23, 23);
     -moz-box-shadow: 0px 0px 20px 5px rgb(23, 23, 23);
     box-shadow: 0px 0px 20px 5px rgb(23, 23, 23);
 }
-@mixin group-scrollbar(){
+@mixin group-scrollbar() {
     &::-webkit-scrollbar {
         height: 1.2rem;
     }
@@ -55,34 +54,34 @@
     background: #555;
 }
 
-*{
+* {
     margin: 0;
     padding: 0;
 }
-a{
+a {
     text-decoration: none;
     color: inherit;
-    &:hover{
+    &:hover {
         cursor: pointer;
-        opacity: 50% ;
+        opacity: 50%;
     }
-    &:active{
+    &:active {
         opacity: 50%;
     }
 }
-body{
-    background-image: linear-gradient(206deg, rgba(80,9,121,1) 0%, rgba(0,212,255,1) 100%);
+body {
+    background-image: linear-gradient(206deg, rgba(80, 9, 121, 1) 0%, rgba(0, 212, 255, 1) 100%);
     background-attachment: fixed;
     background-size: cover;
     text-align: center;
     font-family: Arial, Helvetica, sans-serif;
-    #root{
+    #root {
         height: 100%;
     }
 }
-.main {   
+.main {
     min-height: 100vh;
-    color:white;
+    color: white;
     display: flex;
     align-items: center;
 }
@@ -90,12 +89,12 @@ body{
 .formPage {
     @include uni-shadow();
     max-width: 600px;
-    width: 100%; 
+    width: 100%;
     border-radius: 5px;
     padding: 20px 0;
     margin: 0 auto;
     background: white;
-    color: rgba(45,98,180,1);
+    color: rgba(45, 98, 180, 1);
     max-height: 25rem;
     display: flex;
     flex-direction: column;
@@ -108,41 +107,41 @@ body{
 }
 
 button {
-        background: #7daeff;
-        padding: 1rem;
-        border: none;
-        border-radius: 50px;
-        color: white;
-        font-size: 1.2rem;
-        &:hover{
-            background: #507fca;
-            cursor: pointer;
-        }
-        &:active{
-            outline: auto;
-        }
+    background: #7daeff;
+    padding: 1rem;
+    border: none;
+    border-radius: 50px;
+    color: white;
+    font-size: 1.2rem;
+    &:hover {
+        background: #507fca;
+        cursor: pointer;
+    }
+    &:active {
+        outline: auto;
+    }
 }
 
 .formPage form {
     @include flex-col();
     font-size: 1.2em;
     width: 100%;
-    *{
+    * {
         padding: 10px;
         text-align: left;
     }
-    label{
+    label {
         @include flex-label();
         background: #7daeff;
         color: white;
         border-radius: 50px;
         width: 75%;
-        &:hover{
+        &:hover {
             background: #507fca;
             cursor: text;
         }
     }
-    input{
+    input {
         background: none;
         border: none;
         border-radius: 50px;
@@ -150,7 +149,7 @@ button {
         outline: none;
         flex-grow: 2;
     }
-    button{
+    button {
         width: 50%;
         text-align: center;
         background: #7daeff;
@@ -158,37 +157,28 @@ button {
         border-radius: 50px;
         color: white;
         font-size: 1.2rem;
-        &:hover{
+        &:hover {
             background: #507fca;
             cursor: pointer;
         }
-        &:active{
+        &:active {
             outline: auto;
         }
     }
 }
 
-.dashboard{
-    width: 100%;
-    display: grid;
-    flex-direction: column;
-    flex-wrap: wrap;
-    justify-items: center;
-    gap: 10px;
-}
-
-.navbar{
+.navbar {
     // @include uni-shadow();
     width: 100%;
     box-sizing: border-box;
     padding: 1rem;
     background: white;
-    background-color: rgba(0,212,255,0);
+    background-color: rgba(0, 212, 255, 0);
     color: white;
     display: flex;
     flex-wrap: nowrap;
     justify-content: space-between;
-    a{
+    a {
         width: 5rem;
         padding: 0.5rem;
         text-align: center;
@@ -197,11 +187,11 @@ button {
         border-radius: 50px;
         color: white;
         font-size: 1.2rem;
-        &:hover{
+        &:hover {
             background: #507fca;
             cursor: pointer;
         }
-        &:active{
+        &:active {
             outline: auto;
         }
     }
@@ -209,13 +199,16 @@ button {
 
 .dash-wrapper {
     width: 100%;
-    height: 100%;
 }
 
-.mainspace{
+.dashboard {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+.mainspace {
     @include flex-row();
-    width: 95%;
-    min-height: 35rem;
+    width: 90%;
     box-sizing: border-box;
     margin: 1rem;
     padding: 3rem 4rem;
@@ -223,20 +216,42 @@ button {
     flex-wrap: wrap;
     background-color: #ffffff90;
     border-radius: 0.5rem;
-    overflow-x: scroll;
-    .group{
-        @include flex-col();
-        @include group-scrollbar();
-        padding: 1rem 2rem;
-        flex-wrap: nowrap;
-        justify-content: flex-start;
-        min-width: 30rem;
-        min-height: 50%;
-        max-height: 80%;
-        overflow-y: scroll;
-        background: #ebecf0;
-        color: black;
-        border-radius: 1rem;
+    .group-box {
+        display: flex;
+        overflow-x: scroll;
+        gap: 1rem;
+        padding: 1rem;
+        min-height: 35rem;
+        width: 100%;
+        .group {
+            position: relative;
+            @include flex-col();
+            @include group-scrollbar();
+            padding: 1rem 2rem;
+            flex-wrap: nowrap;
+            justify-content: flex-start;
+            min-width: 30rem;
+            height: 30rem;
+            overflow-y: scroll;
+            background: #ebecf0;
+            color: black;
+            border-radius: 1rem;
+
+            button {
+                position: absolute;
+                right: 5px;
+                top: 5px;
+                padding: 1rem;
+                height: 40px;
+                width: 40px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                svg {
+                    fill: white;
+                }
+            }
+        }
     }
 
     header {
@@ -246,10 +261,10 @@ button {
     }
 }
 
-.task-list{
+.task-list {
     @include flex-col();
     width: 100%;
-    .task{
+    .task {
         @include flex-col();
         align-items: flex-start;
         padding: 1rem;
@@ -260,11 +275,10 @@ button {
         cursor: pointer;
         user-select: none;
     }
-    .crossed{
+    .crossed {
         text-decoration: line-through;
     }
 }
-
 
 .wrapperBox {
     z-index: 20;
@@ -273,7 +287,7 @@ button {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: rgba(0,0,0,0.6);
+    background-color: rgba(0, 0, 0, 0.6);
     position: fixed;
     top: 0;
     left: 0;
@@ -307,14 +321,4 @@ button {
             width: 40%;
         }
     }
-
-}
-
-.group-box {
-    display: flex;
-    overflow-x: scroll;
-    width: 100%;
-    gap: 1rem;
-    padding: 1rem;
-    min-height: 35rem;
 }

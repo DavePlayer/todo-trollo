@@ -1,12 +1,17 @@
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { TasksList } from "../TasksList/taskList";
 import { toast } from "react-toastify";
+import { Wraper } from "../../shared/Wrapper/Wrapper";
 import "react-toastify/dist/ReactToastify.css";
+import { createTaskFtch } from "../../redux/reducers/tasks";
 
 export const Group = ({ groupid, name, creator }) => {
     const [creatorName, setCreatorName] = useState("");
     const user = useSelector((state) => state.user);
+    const [visibility, setVisibility] = useState(false);
+    const [createTaskName, setCreateTaskName] = useState("");
+    const dispatch = useDispatch();
     useEffect(() => {
         console.log("getting there", groupid, name, creator);
         if (creator)
@@ -30,11 +35,62 @@ export const Group = ({ groupid, name, creator }) => {
                     toast.error(err.message);
                 });
     }, []);
+
+    const handleChange = (e) => {
+        let { value } = e.target;
+        setCreateTaskName(value);
+    };
+
+    const hideWrapper = (e) => {
+        e.preventDefault();
+        setVisibility(false);
+        setCreateTaskName("");
+    };
+
+    const createTask = (e) => {
+        e.preventDefault();
+        if (createTaskName.length <= 0) return toast.error("Group name can't be empty");
+
+        dispatch(createTaskFtch({ token: user.jwt, name: createTaskName, groupId: groupid }));
+
+        setVisibility(false);
+        setCreateTaskName("");
+    };
     return (
-        <div className="group">
-            <h2> {name} </h2>
-            <p>Created by: {creatorName}</p>
-            <TasksList groupId={groupid} />
-        </div>
+        <>
+            <div className="group">
+                <button onClick={() => setVisibility(true)}>
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="10"
+                        height="10"
+                        viewBox="0 0 24 24"
+                    >
+                        <path d="M24 10h-10v-10h-4v10h-10v4h10v10h4v-10h10z" />
+                    </svg>
+                </button>
+                <h2> {name} </h2>
+                <p>Created by: {creatorName}</p>
+                <TasksList groupId={groupid} />
+            </div>
+            {visibility && (
+                <Wraper visibilityChange={setVisibility}>
+                    <form action="">
+                        <h1>Create new Task for group "{name}"</h1>
+                        <input
+                            name=""
+                            value={createTaskName}
+                            onChange={(e) => handleChange(e)}
+                            type="text"
+                            placeholder="Group Name"
+                        />
+                        <div className="button-space">
+                            <button onClick={(e) => createTask(e)}>Create</button>
+                            <button onClick={(e) => hideWrapper(e)}>Cancel</button>
+                        </div>
+                    </form>
+                </Wraper>
+            )}
+        </>
     );
 };

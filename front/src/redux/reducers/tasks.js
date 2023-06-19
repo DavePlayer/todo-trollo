@@ -64,6 +64,45 @@ export const fetchTasks = createAsyncThunk("/tasks", ({ token }) => {
     return resolve;
 });
 
+export const createTaskFtch = createAsyncThunk("/task-add", ({ token, name, groupId }) => {
+    console.log(`creating task task: ${groupId} ${name}`);
+    const resolve = fetch(`http://127.0.0.1:8080/task-add`, {
+        method: "POST",
+        headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name, group_id: groupId }),
+    }).then(async (data) => {
+        if (!data.ok) {
+            throw new Error(`${data.status}: ${await data.text()}`);
+        }
+        return data.json();
+    });
+    toast.promise(resolve, {
+        pending: {
+            render() {
+                return "I'm loading";
+            },
+            type: "pending",
+        },
+        success: {
+            render({ data }) {
+                return `Successfully created new task`;
+            },
+            type: "success",
+        },
+        error: {
+            render({ data }) {
+                // When the promise reject, data will contains the error
+                return data.message;
+            },
+            type: "error",
+        },
+    });
+    return resolve;
+});
+
 export const crossTask = createAsyncThunk("/cross", ({ token, taskId }) => {
     console.log(`crossing task: ${taskId}`);
     const resolve = fetch(`http://127.0.0.1:8080/task/cross`, {
@@ -136,6 +175,16 @@ export const tasksSlice = createSlice({
         builder.addCase(crossTask.rejected, (state, action) => {
             state.loading = false;
             toast.error(action.error.message);
+        });
+
+        builder.addCase(createTaskFtch.fulfilled, (state, action) => {
+            state.loading = false;
+            state.data = [...state.data, action.payload];
+        });
+        builder.addCase(createTaskFtch.rejected, (state, action) => {
+            state.loading = false;
+            state.error = true;
+            console.error(action.error.message);
         });
     },
 });
