@@ -45,6 +45,45 @@ export const fetchGroups = createAsyncThunk("/groups", ({ token }) => {
     return resolve;
 });
 
+export const createGroupFtch = createAsyncThunk("/group-add", ({ token, userId, groupName }) => {
+    console.log("creating new group: ", groupName);
+    const resolve = fetch(`http://127.0.0.1:8080/group-add`, {
+        method: "POST",
+        headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name: groupName, creator: userId }),
+    }).then(async (data) => {
+        if (!data.ok) {
+            throw new Error(`${data.status}: ${await data.text()}`);
+        }
+        return data.json();
+    });
+    toast.promise(resolve, {
+        pending: {
+            render() {
+                return "I'm loading";
+            },
+            type: "pending",
+        },
+        success: {
+            render({ data }) {
+                return `successfully created new group`;
+            },
+            // other options
+        },
+        error: {
+            render({ data }) {
+                // When the promise reject, data will contains the error
+                return data.message;
+            },
+            type: "error",
+        },
+    });
+    return resolve;
+});
+
 export const groupsSlice = createSlice({
     name: "groups",
     initialState,
@@ -61,6 +100,16 @@ export const groupsSlice = createSlice({
             state.loading = false;
             state.error = true;
             console.error(action.error);
+            console.error(action.error.message);
+        });
+
+        builder.addCase(createGroupFtch.fulfilled, (state, action) => {
+            state.loading = false;
+            state.data = [...state.data, action.payload];
+        });
+        builder.addCase(createGroupFtch.rejected, (state, action) => {
+            state.loading = false;
+            state.error = true;
             console.error(action.error.message);
         });
     },

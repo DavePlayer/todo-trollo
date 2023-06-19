@@ -33,8 +33,8 @@ export const Group = ({ groupid, name, creator }) => {
     return (
         <div className="group">
             <h2> {name} </h2>
-            <TasksList groupId={groupid} />
             <p>Created by: {creatorName}</p>
+            <TasksList groupId={groupid} />
         </div>
     );
 };

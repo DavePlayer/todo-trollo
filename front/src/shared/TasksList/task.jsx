@@ -1,16 +1,21 @@
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { TasksList } from "../TasksList/taskList";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { crossTask } from "../../redux/reducers/tasks";
 
 export const Task = ({ task }) => {
     const [crossUser, setCrossUser] = useState("");
     const user = useSelector((root) => root.user);
+    const dispatch = useDispatch();
+
+    const handleCross = (e, taskId) => {
+        dispatch(crossTask({ token: user.jwt, taskId }));
+    };
 
     useEffect(() => {
         if (task && (task.crossed_by_id || task.crossed_by_id == 0)) {
-            console.log("fetching user somwhow when it shouldn't ", task);
             fetch(`http://127.0.0.1:8080/user/${task.crossed_by_id}`, {
                 method: "GET",
                 headers: {
@@ -30,9 +35,9 @@ export const Task = ({ task }) => {
                     toast.error(err.message);
                 });
         }
-    }, []);
+    }, [task.crossed_by_id]);
     return (
-        <div className="task">
+        <div className="task" onClick={(e) => handleCross(e, task.id)}>
             <h3 className={`${task.crossed_by_id != null ? "crossed" : ""}`}>{task.name}</h3>
             {task.crossed_by_id != null && <p>crossed by {crossUser}</p>}
         </div>
