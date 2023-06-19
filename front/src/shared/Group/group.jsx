@@ -5,11 +5,13 @@ import { toast } from "react-toastify";
 import { Wraper } from "../../shared/Wrapper/Wrapper";
 import "react-toastify/dist/ReactToastify.css";
 import { createTaskFtch } from "../../redux/reducers/tasks";
+import { InviteUsers } from "./inviteUsers";
 
 export const Group = ({ groupid, name, creator }) => {
     const [creatorName, setCreatorName] = useState("");
     const user = useSelector((state) => state.user);
     const [visibility, setVisibility] = useState(false);
+    const [visibility2, setVisibility2] = useState(false);
     const [createTaskName, setCreateTaskName] = useState("");
     const dispatch = useDispatch();
     useEffect(() => {
@@ -69,6 +71,16 @@ export const Group = ({ groupid, name, creator }) => {
                         <path d="M24 10h-10v-10h-4v10h-10v4h10v10h4v-10h10z" />
                     </svg>
                 </button>
+                <button onClick={() => setVisibility2(true)}>
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                    >
+                        <path d="M19.5 15c-2.483 0-4.5 2.015-4.5 4.5s2.017 4.5 4.5 4.5 4.5-2.015 4.5-4.5-2.017-4.5-4.5-4.5zm2.5 5h-2v2h-1v-2h-2v-1h2v-2h1v2h2v1zm-7.18 4h-14.815l-.005-1.241c0-2.52.199-3.975 3.178-4.663 3.365-.777 6.688-1.473 5.09-4.418-4.733-8.729-1.35-13.678 3.732-13.678 6.751 0 7.506 7.595 3.64 13.679-1.292 2.031-2.64 3.63-2.64 5.821 0 1.747.696 3.331 1.82 4.5z" />
+                    </svg>
+                </button>
                 <h2> {name} </h2>
                 <p>Created by: {creatorName}</p>
                 <TasksList groupId={groupid} />
@@ -89,6 +101,15 @@ export const Group = ({ groupid, name, creator }) => {
                             <button onClick={(e) => hideWrapper(e)}>Cancel</button>
                         </div>
                     </form>
+                </Wraper>
+            )}
+            {visibility2 && (
+                <Wraper visibilityChange={setVisibility2}>
+                    <InviteUsers
+                        groupId={groupid}
+                        groupName={name}
+                        setVisibility={() => setVisibility2(false)}
+                    />
                 </Wraper>
             )}
         </>

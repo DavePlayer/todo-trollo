@@ -251,6 +251,10 @@ button {
                     fill: white;
                 }
             }
+
+            button:nth-child(2) {
+                right: 50px;
+            }
         }
     }
 
@@ -293,6 +297,7 @@ button {
     left: 0;
 
     > * {
+        z-index: 30;
         background: #fff;
         width: 40%;
         min-height: 50%;
@@ -320,5 +325,21 @@ button {
         button {
             width: 40%;
         }
+    }
+    h1 {
+        font-size: 2rem;
+    }
+}
+
+.users-grid {
+    height: 100%;
+    width: 100%;
+    font-size: 1.1rem;
+    font: normal;
+    overflow: hidden;
+    margin-top: 1rem;
+
+    th {
+        font: medium;
     }
 }
