@@ -11,7 +11,9 @@ export const Task = ({ task }) => {
     const dispatch = useDispatch();
 
     const handleCross = (e, taskId) => {
-        dispatch(crossTask({ token: user.jwt, taskId }));
+        if (task.crossed_by_id == user.id || task.crossed_by_id == null)
+            dispatch(crossTask({ token: user.jwt, taskId }));
+        else return toast.error("you can't de-cross task that you did not cross");
     };
 
     useEffect(() => {

@@ -13,7 +13,7 @@ use diesel::{insert_into, prelude::*};
 pub async fn create_group(
     req: HttpRequest,
     body: Json<NewGroup>,
-) -> Result<String, errors::UltimateError> {
+) -> Result<Json<Grup>, errors::UltimateError> {
     log::info!("inserting new group: {}", body.name);
     let claims = match req.extensions_mut().get::<UserClaims>() {
         Some(o) => o.clone(),
@@ -116,5 +116,5 @@ pub async fn create_group(
         status
     );
 
-    Ok("successfully created new group".to_string())
+    Ok(Json(inserted_grup))
 }

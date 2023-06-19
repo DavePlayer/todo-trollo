@@ -15,7 +15,7 @@ use diesel::{insert_into, prelude::*};
 pub async fn create_task(
     data: Data<Addr<ChatServer>>,
     body: Json<TaskToInsert>,
-) -> Result<String, errors::UltimateError> {
+) -> Result<Json<Task>, errors::UltimateError> {
     log::info!("creating new task {} in group {}", body.name, body.group_id);
     log::debug!("{:?}", body);
 
@@ -106,5 +106,5 @@ pub async fn create_task(
         }
     };
 
-    Ok("Successfully created new task".to_string())
+    Ok(Json(task_to_return))
 }
