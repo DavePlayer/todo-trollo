@@ -149,13 +149,16 @@ export const tasksSlice = createSlice({
     reducers: {
         updateTaskWS: (state, action) => {
             const tasktoUpdate = action.payload;
-            console.log("UPDATING TASK VIA WS: ", tasktoUpdate);
             state.data = state.data.map((task) => {
                 if (task.id === tasktoUpdate.id) {
                     return { ...task, crossed_by_id: tasktoUpdate.crossed_by_id };
                 }
                 return task;
             });
+        },
+        createTaskWS: (state, action) => {
+            const newTask = action.payload;
+            state.data = [...state.data, newTask];
         },
     },
     extraReducers: (builder) => {
@@ -190,7 +193,8 @@ export const tasksSlice = createSlice({
 
         builder.addCase(createTaskFtch.fulfilled, (state, action) => {
             state.loading = false;
-            state.data = [...state.data, action.payload];
+            // overwritten by WS
+            // state.data = [...state.data, action.payload];
         });
         builder.addCase(createTaskFtch.rejected, (state, action) => {
             state.loading = false;
@@ -200,6 +204,6 @@ export const tasksSlice = createSlice({
     },
 });
 
-export const { updateTaskWS } = tasksSlice.actions;
+export const { updateTaskWS, createTaskWS } = tasksSlice.actions;
 
 export default tasksSlice.reducer;

@@ -106,7 +106,7 @@ pub async fn force_assign_users(
         match data.try_send(crate::websockets::server::ClientMessage {
             id: 1,
             msg: format!(
-                "/forceInvite {{user_id: {}, group: {} }}",
+                "/forceInvite {{\"user_id\": {}, \"group\": {} }}",
                 user_id_t,
                 match serde_json::to_string(&grp) {
                     Ok(o) => o,

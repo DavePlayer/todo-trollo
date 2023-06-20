@@ -2,8 +2,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { Navbar } from "../../shared/Navbar/navbar";
 import { Group } from "../../shared/Group/group";
 import { useEffect, useState, useCallback } from "react";
-import { createGroupFtch, fetchGroups } from "../../redux/reducers/groups";
-import { fetchTasks, updateTaskWS } from "../../redux/reducers/tasks";
+import { createGroupFtch, fetchGroups, forceInvite } from "../../redux/reducers/groups";
+import { createTaskWS, fetchTasks, updateTaskWS } from "../../redux/reducers/tasks";
 import { Wraper } from "../../shared/Wrapper/Wrapper";
 import { toast } from "react-toastify";
 import useWebSocket, { ReadyState } from "react-use-websocket";
@@ -51,6 +51,16 @@ export const Dashboard = () => {
                     case "/taskCrossed":
                     case "/taskUncrossed":
                         dispatch(updateTaskWS(commandData));
+                        break;
+                    case "/forceInvite":
+                        console.log("force inviting user: ", commandData);
+                        if (commandData.user_id == user.id) {
+                            dispatch(forceInvite(commandData));
+                        }
+                        break;
+                    case "/taskCreate":
+                        console.log("Someone created new task: ", command);
+                        dispatch(createTaskWS(commandData));
                         break;
                 }
             }

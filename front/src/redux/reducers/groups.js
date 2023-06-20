@@ -87,7 +87,13 @@ export const createGroupFtch = createAsyncThunk("/group-add", ({ token, userId, 
 export const groupsSlice = createSlice({
     name: "groups",
     initialState,
-    reducers: {},
+    reducers: {
+        forceInvite: (state, action) => {
+            const newGroup = action.payload.group;
+            toast.info(`you were invited to ${newGroup.name}`);
+            state.data = [...state.data, newGroup];
+        },
+    },
     extraReducers: (builder) => {
         builder.addCase(fetchGroups.pending, (state) => {
             state.loading = true;
@@ -115,6 +121,6 @@ export const groupsSlice = createSlice({
     },
 });
 
-export const {} = groupsSlice.actions;
+export const { forceInvite } = groupsSlice.actions;
 
 export default groupsSlice.reducer;
