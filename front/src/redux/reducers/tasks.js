@@ -146,7 +146,18 @@ export const crossTask = createAsyncThunk("/cross", ({ token, taskId }) => {
 export const tasksSlice = createSlice({
     name: "tasks",
     initialState,
-    reducers: {},
+    reducers: {
+        updateTaskWS: (state, action) => {
+            const tasktoUpdate = action.payload;
+            console.log("UPDATING TASK VIA WS: ", tasktoUpdate);
+            state.data = state.data.map((task) => {
+                if (task.id === tasktoUpdate.id) {
+                    return { ...task, crossed_by_id: tasktoUpdate.crossed_by_id };
+                }
+                return task;
+            });
+        },
+    },
     extraReducers: (builder) => {
         builder.addCase(fetchTasks.pending, (state) => {
             state.loading = true;
@@ -163,14 +174,14 @@ export const tasksSlice = createSlice({
 
         builder.addCase(crossTask.fulfilled, (state, action) => {
             state.loading = false;
-            state.data = state.data.map((task) => {
-                if (task.id === action.payload.id) {
-                    if (task.crossed_by_id == null)
-                        return { ...task, crossed_by_id: action.payload.userData.id };
-                    return { ...task, crossed_by_id: null };
-                }
-                return task;
-            });
+            // state.data = state.data.map((task) => {
+            //     if (task.id === action.payload.id) {
+            //         if (task.crossed_by_id == null)
+            //             return { ...task, crossed_by_id: action.payload.userData.id };
+            //         return { ...task, crossed_by_id: null };
+            //     }
+            //     return task;
+            // });
         });
         builder.addCase(crossTask.rejected, (state, action) => {
             state.loading = false;
@@ -189,6 +200,6 @@ export const tasksSlice = createSlice({
     },
 });
 
-export const {} = tasksSlice.actions;
+export const { updateTaskWS } = tasksSlice.actions;
 
 export default tasksSlice.reducer;

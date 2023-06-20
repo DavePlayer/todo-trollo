@@ -1,11 +1,21 @@
 import { useDispatch, useSelector } from "react-redux";
 import { Navbar } from "../../shared/Navbar/navbar";
 import { Group } from "../../shared/Group/group";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { createGroupFtch, fetchGroups } from "../../redux/reducers/groups";
-import { fetchTasks } from "../../redux/reducers/tasks";
+import { fetchTasks, updateTaskWS } from "../../redux/reducers/tasks";
 import { Wraper } from "../../shared/Wrapper/Wrapper";
 import { toast } from "react-toastify";
+import useWebSocket, { ReadyState } from "react-use-websocket";
+
+function isJsonString(str) {
+    try {
+        JSON.parse(str);
+    } catch (e) {
+        return false;
+    }
+    return true;
+}
 
 export const Dashboard = () => {
     const groups = useSelector((state) => state.groups);
@@ -14,9 +24,43 @@ export const Dashboard = () => {
     const [visibility, setVisibility] = useState(false);
     const [createGroupName, setCreateGroupName] = useState("");
     const dispatch = useDispatch();
+    const [messageHistory, setMessageHistory] = useState([]);
+
+    const { sendMessage, lastMessage, readyState } = useWebSocket("ws://127.0.0.1:8080/ws/");
+    const connectionStatus = {
+        [ReadyState.CONNECTING]: "Connecting",
+        [ReadyState.OPEN]: "Open",
+        [ReadyState.CLOSING]: "Closing",
+        [ReadyState.CLOSED]: "Closed",
+        [ReadyState.UNINSTANTIATED]: "Uninstantiated",
+    }[readyState];
+
+    useEffect(() => {
+        if (lastMessage !== null) {
+            setMessageHistory((prev) => prev.concat(lastMessage));
+            var i = lastMessage.data.indexOf(" ");
+            let [command, commandData] = [
+                lastMessage.data.slice(0, i),
+                lastMessage.data.slice(i + 1),
+            ];
+
+            if (isJsonString(commandData)) {
+                commandData = JSON.parse(commandData);
+
+                switch (command) {
+                    case "/taskCrossed":
+                    case "/taskUncrossed":
+                        dispatch(updateTaskWS(commandData));
+                        break;
+                }
+            }
+        }
+    }, [lastMessage, setMessageHistory]);
+
     useEffect(() => {
         dispatch(fetchGroups({ token: user.jwt }));
         dispatch(fetchTasks({ token: user.jwt }));
+        toast.info(`websocket status: ${connectionStatus}`);
     }, []);
 
     const handleChange = (e) => {

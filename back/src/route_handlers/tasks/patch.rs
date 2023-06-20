@@ -81,6 +81,16 @@ pub async fn cross_task(
                 ));
             }
         };
+        let task_in_server: Vec<Task> =
+            match tasks.filter(id.eq(&body.id)).load::<Task>(&mut connection) {
+                Ok(o) => o,
+                Err(err) => {
+                    return Err(errors::UltimateError::Database(
+                        errors::DatabaseErrors::SelectError(err.to_string()),
+                    ));
+                }
+            };
+        let task_in_server = task_in_server.into_iter().next().unwrap();
 
         log::info!("successfully de-crossed task({}): {}", penis, update_status);
 
@@ -113,6 +123,17 @@ pub async fn cross_task(
     };
 
     log::info!("successfully crossed task: {}", update_status);
+
+    let task_in_server: Vec<Task> =
+        match tasks.filter(id.eq(&body.id)).load::<Task>(&mut connection) {
+            Ok(o) => o,
+            Err(err) => {
+                return Err(errors::UltimateError::Database(
+                    errors::DatabaseErrors::SelectError(err.to_string()),
+                ));
+            }
+        };
+    let task_in_server = task_in_server.into_iter().next().unwrap();
 
     data.do_send(crate::websockets::server::ClientMessage {
         id: 1,
