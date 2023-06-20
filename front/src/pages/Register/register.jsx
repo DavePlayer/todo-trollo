@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, redirect, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { fetchRegister } from "./../../redux/reducers/user";
+import { toast } from "react-toastify";
 
 export const Register = () => {
     const navigate = useNavigate();
@@ -9,8 +10,10 @@ export const Register = () => {
     const [form, setForm] = useState({ login: "", password: "", confpassword: "", name: "" });
     const handleClick = (e) => {
         e.preventDefault();
-        navigate("/");
+        if (form.password != form.confpassword)
+            return toast.error("confirm password is diffrent than password");
         dispatch(fetchRegister(form));
+        redirect("/login");
     };
     const handleChange = (e) => {
         let { name, value } = e.target;
